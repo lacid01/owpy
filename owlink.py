@@ -74,11 +74,11 @@ def iterate_list(ctylst):
 
 
 
-headers ={ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':'*/*'}
-url='http://api.openweathermap.org/data/2.5/weather?lat=52.482626&lon=13.357410&appid=53dafd10eab9188765711009650ab647'
-response = requests.get(url, headers=headers, verify = False)   
-parsed_json_Erhaltete_Werte  = json.loads(response.text)
-print(parsed_json_Erhaltete_Werte)
+#headers ={ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':'*/*'}
+#url='http://api.openweathermap.org/data/2.5/weather?lat=52.482626&lon=13.357410&appid=53dafd10eab9188765711009650ab647'
+#response = requests.get(url, headers=headers, verify = False)   
+#parsed_json_Erhaltete_Werte  = json.loads(response.text)
+#print(parsed_json_Erhaltete_Werte)
 #print('\n\n')
 
 #k = weather(parsed_json_Erhaltete_Werte)
