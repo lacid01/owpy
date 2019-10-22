@@ -68,7 +68,7 @@ def iterate_list(ctylst):
 				print('\n\n' + str(wth))
 			time.sleep(1.0)
 
-		time.sleep(5.0)
+		time.sleep(60.0)
 
 		i += 1
 
