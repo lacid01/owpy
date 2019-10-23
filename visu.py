@@ -13,11 +13,8 @@ _end = False
 
 def runner():
     while not _end:
-        if len(_queu) > 0:
-            _lock.acquire()
-            k = _queu.pop()
-            _lock.release()
-            print(k)
+        print(len(_queu))
+        time.sleep(0.2)
 
 
 def start_visu():

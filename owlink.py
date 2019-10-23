@@ -98,7 +98,7 @@ def iterate_list(ctylst):
 #print(k.gettempjson())
 
 visu.start_visu()
-time.sleep(4.0)
+time.sleep(1.0)
 visu.add_weather_to_queu(5)
 time.sleep(5.0)
 visu.stop_visu()
