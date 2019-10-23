@@ -7,6 +7,7 @@ import math
 from weather import *
 import time
 import os
+import sys
 
 
 from targetrawdatapoint import *
@@ -50,9 +51,13 @@ def iterate_list(ctylst):
 	
 	for cty in ctylst:
 		wth = getcty(cty)
-		rsp,city,bgn = postcty(wth, cty)
-		dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-		print('\n\n' + str(wth))
+		print('\n==============\n' + str(wth) + '\n==============')
+		try:
+			rsp,city,bgn = postcty(wth, cty)
+			dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+		except Exception as e:
+			print('Keine Verbindung zu EnEffCo Host')
+			sys.exit()
 		time.sleep(1.0)
 	
 	i = 0
@@ -63,9 +68,12 @@ def iterate_list(ctylst):
 			wth = getcty(cty)
 			bgn = wth.begin
 			if dct[cty['ID']]['begin'] != bgn:
-				rsp,city,bgn = postcty(wth, cty)
-				dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-				print('\n\n' + str(wth))
+				print('\n==============\n' + str(wth) + '\n==============')
+				try:
+					rsp,city,bgn = postcty(wth, cty)
+					dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+				except Exception as e:
+					print('Keine Verbindung zu EnEffCo Host')
 			time.sleep(1.0)
 
 		time.sleep(60.0)
