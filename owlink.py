@@ -8,6 +8,7 @@ from weather import *
 import time
 import os
 import sys
+import visu
 
 
 from targetrawdatapoint import *
@@ -95,6 +96,13 @@ def iterate_list(ctylst):
 
 #print('\nSchreibe nach EnEffCo:')
 #print(k.gettempjson())
+
+visu.start_visu()
+time.sleep(4.0)
+visu.add_weather_to_queu(5)
+time.sleep(5.0)
+visu.stop_visu()
+sys.exit()
 
 print('STARTE...')
 if sys.platform == "linux" or sys.platform == "linux2":
