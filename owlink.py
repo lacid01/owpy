@@ -97,6 +97,12 @@ def iterate_list(ctylst):
 #print(k.gettempjson())
 
 print('STARTE...')
+if sys.platform == "linux" or sys.platform == "linux2":
+    print('OS: Linux')
+elif sys.platform == "darwin":
+    print('OS: OS X')
+elif sys.platform == "win32":
+    print('OS: Windows')
 
 ctlist = datapointtarget.get_cities()
 iterate_list(ctlist)
