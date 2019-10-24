@@ -130,6 +130,8 @@ elif sys.platform == "darwin":
 elif sys.platform == "win32":
     print('OS: Windows')
 
+time.sleep(5.0)
+
 ctlist = datapointtarget.get_cities()
 iterate_list(ctlist)
 
