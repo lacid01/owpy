@@ -49,10 +49,13 @@ def iterate_list(ctylst):
 
 	dct = {}
 
+	hmi = visu.visualisation()
+	hmi.start_visu()
 	
 	for cty in ctylst:
 		wth = getcty(cty)
-		print('\n==============\n' + str(wth) + '\n==============')
+		hmi.add_weather_to_queu(wth)
+		#print('\n==============\n' + str(wth) + '\n==============')
 		try:
 			rsp,city,bgn = postcty(wth, cty)
 			dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
@@ -69,10 +72,12 @@ def iterate_list(ctylst):
 			wth = getcty(cty)
 			bgn = wth.begin
 			if dct[cty['ID']]['begin'] != bgn:
-				print('\n==============\n' + str(wth) + '\n==============')
+				#print('\n==============\n' + str(wth) + '\n==============')
+				hmi.add_weather_to_queu(wth)
 				try:
 					rsp,city,bgn = postcty(wth, cty)
 					dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+					
 				except Exception as e:
 					print('Keine Verbindung zu EnEffCo Host')
 			time.sleep(1.0)
@@ -80,6 +85,8 @@ def iterate_list(ctylst):
 		time.sleep(60.0)
 
 		i += 1
+
+	hmi.stop_visu()
 
 
 
@@ -97,12 +104,23 @@ def iterate_list(ctylst):
 #print('\nSchreibe nach EnEffCo:')
 #print(k.gettempjson())
 
-visu.start_visu()
+"""
+hmi = visu.visualisation()
 time.sleep(1.0)
-visu.add_weather_to_queu(5)
+print('Starte runner der hmi')
+hmi.start_visu()
+time.sleep(1.0)
+print('Fuege 5.0 hinzu')
+idx = 0
+while idx < 20:
+	hmi.add_weather_to_queu(idx)
+	time.sleep(0.2)
+	idx += 2
 time.sleep(5.0)
-visu.stop_visu()
+hmi.stop_visu()
+
 sys.exit()
+"""
 
 print('STARTE...')
 if sys.platform == "linux" or sys.platform == "linux2":

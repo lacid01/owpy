@@ -12,6 +12,7 @@ class weather:
 		self.country = jsonvalues['sys']['country']		
 
 		self.description = jsonvalues['weather'][0]['main']
+		self.descriptiondetailed = jsonvalues['weather'][0]['description']
 
 		try:
 			self.temperature = "%.2f" % (jsonvalues['main']['temp'] - 273.15)
@@ -78,13 +79,14 @@ class weather:
 		k = ''
 		k += self.city + ', '
 		k += self.country + '\n'
-		k += 'Wetter: ' + self.description + '\n'
-		k += 'UTC: ' + self.timestamp.strftime('%d.%m.%Y %H:%M:%S') + ', Intervall von: ' + self.begin.strftime('%d.%m.%Y %H:%M:%S') + ', bis: ' + self.end.strftime('%d.%m.%Y %H:%M:%S') + '\n'
-		k += 'LOC: ' + (self.timestamp+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S')
-		k += ', Intervall von: ' + (self.begin+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', bis: ' + (self.end+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + '\n'
-		k += 'Sunrise: ' + (self.sunrise+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', Sunset: ' + (self.sunset+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + '\n'
-		k += 'Temperatur: ' + str(self.temperature) + ', Luftfeuchtigkeit: ' + str(self.humidity) + ', Luftdruck: ' + str(self.pressure) + '\n'
-		k += 'Bewoelkung: ' + str(self.clouds) + ', Windgeschwindigkeit: ' + str(self.windspeed) + ', Windrichtung: ' + str(self.winddeg)
+		k += 'Wetter: ' + self.description + ' - ' + self.descriptiondetailed + '\n'
+		#k += 'UTC: ' + self.timestamp.strftime('%d.%m.%Y %H:%M:%S') + ', Intervall von: ' + self.begin.strftime('%d.%m.%Y %H:%M:%S') + ', bis: ' + self.end.strftime('%d.%m.%Y %H:%M:%S') + '\n'
+		#k += 'LOC: ' + (self.timestamp+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S')
+		#k += ', Intervall von: ' + (self.begin+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', bis: ' + (self.end+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + '\n'
+		k += 'Temperatur: ' + str(self.temperature) + ' °C, Luftfeuchtigkeit: ' + str(self.humidity) + ' %, Luftdruck: ' + str(self.pressure) + ' hPa\n'
+		k += 'Bewoelkung: ' + str(self.clouds) + ' %, Windgeschwindigkeit: ' + str(self.windspeed) + ' m/s , Windrichtung: ' + str(self.winddeg) + '°'
+		k += '\nLOC: ' + (self.timestamp+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S' + ', UTC: ' + self.timestamp.strftime('%d.%m.%Y %H:%M:%S'))
+		k += '\nSunrise: ' + (self.sunrise+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', Sunset: ' + (self.sunset+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ''
 		return k
 
 
