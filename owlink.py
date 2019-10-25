@@ -69,18 +69,21 @@ def iterate_list(ctylst):
 
 		print('i: ' + str(i) + ', dt: ' + str(datetime.now()))
 		for cty in ctylst:
-			wth = getcty(cty)
-			bgn = wth.begin
-			if dct[cty['ID']]['begin'] != bgn:
-				#print('\n==============\n' + str(wth) + '\n==============')
-				hmi.add_weather_to_queu(wth)
-				try:
-					rsp,city,bgn = postcty(wth, cty)
-					dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-					
-				except Exception as e:
-					print('Keine Verbindung zu EnEffCo Host')
-			time.sleep(1.0)
+			try:
+				wth = getcty(cty)
+				bgn = wth.begin
+				if dct[cty['ID']]['begin'] != bgn:
+					#print('\n==============\n' + str(wth) + '\n==============')
+					hmi.add_weather_to_queu(wth)
+					try:
+						rsp,city,bgn = postcty(wth, cty)
+						dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+						
+					except Exception as e:
+						print('Keine Verbindung zu EnEffCo Host')
+				time.sleep(1.0)
+			except Exception as e:
+				print("Keine Verbindung zu ow!")
 
 		time.sleep(60.0)
 
