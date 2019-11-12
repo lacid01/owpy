@@ -125,6 +125,20 @@ class datapointtarget:
         return body
 
     @staticmethod
+    def get_bsslke():
+        body =	{
+            "ID": "bsslke",
+            "lat": 37.336777,
+            "lon": -119.578894,
+            "temperature": "Mustang",
+            "humidity": "Mustang",
+            "pressure": "Mustang",
+            "windspeed": "Mustang",
+            "winddegree": "Mustang"
+            }
+        return body
+
+    @staticmethod
     def get_cities():
         cts = [
             datapointtarget.get_sbrg(),
@@ -134,6 +148,7 @@ class datapointtarget:
             datapointtarget.get_sndrbrg(),
             datapointtarget.get_stckhlm(),
             datapointtarget.get_wkfhr(),
-            datapointtarget.get_sttl()
+            datapointtarget.get_sttl(),
+            datapointtarget.get_bsslke()
         ]
         return cts
