@@ -10,6 +10,7 @@ import os
 import sys
 import visu
 
+from dbhelper import insertRow
 
 from targetrawdatapoint import *
 
@@ -26,36 +27,43 @@ def getcty(cty):
 
 	#print(_parsed_json_Erhaltete_Werte)
 
-	wth  = weather(_parsed_json_Erhaltete_Werte)
+	wth  = weather(_parsed_json_Erhaltete_Werte,cty)
 	return wth
 
 def postcty(wth, cty):
-	vals = wth.getjsondatalist(cty)
+	#vals = wth.getjsondatalist(cty)
 
 	#print(wth)
 
+	# nach EnEffCo
 	rt = []
+	"""
 	for val in vals:
 		header ={ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':'*/*'}
 		posturl = "http://eneffco/EnEffCoPKr/api/v0.1/rawdatapoint/" + val['datapointid'] + "/values?comment=warum"
 		rt.append(requests.post(posturl, data = val['Values'], headers=header, verify = False, auth=('EnEffCoSystemadmin', 'EnEffCoOekotec')))
 		#print('ID: ' + val['datapointid'])
 		#print("Values: " + val['Values'])
-
+	"""
 	return rt,wth.city,wth.begin
 
+def weatherToDb(wth):
+	insertRow(wth)
 
-def iterate_list(ctylst):
+
+def iterate_list():
+	ctylst = datapointtarget.get_cities()
 
 	dct = {}
 
 	hmi = visu.visualisation()
 	hmi.start_visu()
 	
-	for cty in ctylst:
+	for index, cty in ctylst.iterrows():
 		wth = getcty(cty)
-		hmi.add_weather_to_queu(wth)
-		#print('\n==============\n' + str(wth) + '\n==============')
+		if cty['Zeige in Visu'] == 'True':
+			hmi.add_weather_to_queu(wth)
+		weatherToDb(wth)
 		try:
 			rsp,city,bgn = postcty(wth, cty)
 			dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
@@ -66,19 +74,21 @@ def iterate_list(ctylst):
 	
 	i = 0
 	while True:
+		
+		ctylst = datapointtarget.get_cities()
 
 		print('i: ' + str(i) + ', dt: ' + str(datetime.now()))
-		for cty in ctylst:
+		for index, cty in ctylst.iterrows():
 			try:
 				wth = getcty(cty)
 				bgn = wth.begin
 				if dct[cty['ID']]['begin'] != bgn:
-					#print('\n==============\n' + str(wth) + '\n==============')
-					hmi.add_weather_to_queu(wth)
+					if cty['Zeige in Visu'] == 'True':
+						hmi.add_weather_to_queu(wth)
+					weatherToDb(wth)
 					try:
 						rsp,city,bgn = postcty(wth, cty)
 						dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-						
 					except Exception as e:
 						print('Keine Verbindung zu EnEffCo Host')
 				time.sleep(1.0)
@@ -135,8 +145,8 @@ elif sys.platform == "win32":
 
 time.sleep(5.0)
 
-ctlist = datapointtarget.get_cities()
-iterate_list(ctlist)
+
+iterate_list()
 
 
 #k,cty,begin = postcty(getcty( datapointtarget.get_sbrg() ), datapointtarget.get_sbrg() )

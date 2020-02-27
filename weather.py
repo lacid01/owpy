@@ -3,9 +3,12 @@ from jsonhelper import *
 from datetime import datetime, timedelta
 
 class weather:
-	def __init__(self, jsonvalues):
+	def __init__(self, jsonvalues, cty):
+		self.cityid = cty['FKID']
+
 		self.city = jsonvalues['name']
 		self.timestamp = datetime.utcfromtimestamp(jsonvalues['dt'])
+		self.timestampRAW = jsonvalues['dt']
 		self.begin, self.end = self.timestamptotimerange()
 		self.sunrise = datetime.utcfromtimestamp(jsonvalues['sys']['sunrise'])
 		self.sunset = datetime.utcfromtimestamp(jsonvalues['sys']['sunset'])
@@ -18,6 +21,11 @@ class weather:
 			self.temperature = "%.2f" % (jsonvalues['main']['temp'] - 273.15)
 		except Exception as e:
 			self.temperature = ''
+
+		try:
+			self.temperaturegefuehlt = "%.2f" % (jsonvalues['main']['feels_like'] - 273.15)
+		except Exception as e:
+			self.temperaturegefuehlt = ''
 
 		try:
 			self.humidity = str(jsonvalues['main']['humidity'])
@@ -85,7 +93,7 @@ class weather:
 		#k += ', Intervall von: ' + (self.begin+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', bis: ' + (self.end+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + '\n'
 		k += '  Temperatur: ' + str(self.temperature) + ' °C, Luftfeuchtigkeit: ' + str(self.humidity) + ' %, Luftdruck: ' + str(self.pressure) + ' hPa\n'
 		k += '  Bewoelkung: ' + str(self.clouds) + ' %, Windgeschwindigkeit: ' + str(self.windspeed) + ' m/s , Windrichtung: ' + str(self.winddeg) + '°'
-		k += '\n  LOC: ' + (self.timestamp+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S' + ', UTC: ' + self.timestamp.strftime('%d.%m.%Y %H:%M:%S'))
+		k += '\n  LOC: ' + (self.timestamp+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', UTC: ' + (self.timestamp.strftime('%d.%m.%Y %H:%M:%S'))
 		k += '\n  Sunrise: ' + (self.sunrise+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ', Sunset: ' + (self.sunset+timedelta(hours=self.timezone)).strftime('%d.%m.%Y %H:%M:%S') + ''
 		return k
 
