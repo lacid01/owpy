@@ -73,8 +73,11 @@ def showWettertabelle2():
         lokalerzeitstempel = (datetime.utcfromtimestamp(int(row[3]))+timedelta(hours=row[15]))
         print("%s, Stadt: %s -> %s, Zeitstempel: %s, Bescheibung: %s, Temperatur: %s°C, gefühlt: %s°C" % (row[1], row[2], cty, lokalerzeitstempel, row[7], row[9], row[10]) )
 
-def showWettertableLetzteWerte():
-    cityquery = """SELECT * FROM Cities ORDER BY cityname;"""
+def getWettertableLetzteWerte(hide = "False"):
+    if hide == "False":
+        cityquery = """SELECT * FROM Cities ORDER BY cityname;"""
+    else:
+        cityquery = """SELECT * FROM Cities ORDER BY cityname WHERE zeigeinvisu = 'True';"""
     cityrecords = getTableSelect(cityquery)
 
     wttrlist = []
@@ -90,9 +93,15 @@ def showWettertableLetzteWerte():
         except:
             pass
 
+    try:
+        wttrtable = pd.DataFrame.from_records(wttrlist)
+        wttrtable.columns = ['Land','Messort','Stadt','Beschreibung','Temperatur', 'Gefühlt', 'Zeitstempel']
+    except:
+        wttrtable = pd.DataFrame()
+    return wttrtable
 
-    wttrtable = pd.DataFrame.from_records(wttrlist)
-    wttrtable.columns = ['Land','Messort','Stadt','Beschreibung','Temperatur', 'Gefühlt', 'Zeitstempel']
+def showWettertableLetzteWerte():
+    wttrtable = getWettertableLetzteWerte()
     print(wttrtable.to_string(index=False))
 
 def insertRow(wth):

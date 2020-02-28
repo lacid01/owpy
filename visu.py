@@ -3,6 +3,7 @@ import os
 from weather import *
 import threading
 import time
+from dbhelper import getWettertableLetzteWerte
 
 
 
@@ -18,6 +19,7 @@ class visualisation():
         self.end = False
         
         print('visualisation: Initialisiere Thread')
+        self.updatevisu()
         self.th = threading.Thread( target=self.runner )
 
 
@@ -45,9 +47,17 @@ class visualisation():
 
             self.clear_terminal()
             print('Time: ' + str(datetime.now()))
+
+            """
             for cty in self.weatherlist.keys():
                 print()
                 print(self.weatherlist[cty])
+            """
+            print("\n")
+            try:
+                print(self.visudata.to_string(index=False))
+            except:
+                pass
 
             time.sleep(0.5)
 
@@ -69,3 +79,6 @@ class visualisation():
             time.sleep(1.0)        
         self.th.join()
         print('Thread beendet')
+
+    def updatevisu(self):
+        self.visudata = getWettertableLetzteWerte()

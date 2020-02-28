@@ -11,6 +11,7 @@ import sys
 import visu
 
 from dbhelper import insertRow
+from targetrawdatapoint import get_cities
 
 from targetrawdatapoint import *
 
@@ -52,7 +53,7 @@ def weatherToDb(wth):
 
 
 def iterate_list():
-	ctylst = datapointtarget.get_cities()
+	ctylst = get_cities()
 
 	dct = {}
 
@@ -61,9 +62,10 @@ def iterate_list():
 	
 	for index, cty in ctylst.iterrows():
 		wth = getcty(cty)
-		if cty['Zeige in Visu'] == 'True':
-			hmi.add_weather_to_queu(wth)
+		#if cty['Zeige in Visu'] == 'True':
+			#hmi.add_weather_to_queu(wth)
 		weatherToDb(wth)
+		hmi.updatevisu()
 		try:
 			rsp,city,bgn = postcty(wth, cty)
 			dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
@@ -75,17 +77,18 @@ def iterate_list():
 	i = 0
 	while True:
 		
-		ctylst = datapointtarget.get_cities()
+		ctylst = get_cities()
 
 		print('i: ' + str(i) + ', dt: ' + str(datetime.now()))
 		for index, cty in ctylst.iterrows():
 			try:
 				wth = getcty(cty)
 				bgn = wth.begin
-				if dct[cty['ID']]['begin'] != bgn:
-					if cty['Zeige in Visu'] == 'True':
-						hmi.add_weather_to_queu(wth)
+				if dct[cty['ID']]['begin'] != bgn: # Hier fehlt eine abfrage bei neu hinzugefuegter city
+					#if cty['Zeige in Visu'] == 'True':
+					#	hmi.add_weather_to_queu(wth)
 					weatherToDb(wth)
+					hmi.updatevisu()
 					try:
 						rsp,city,bgn = postcty(wth, cty)
 						dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
