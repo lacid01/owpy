@@ -77,7 +77,7 @@ def getWettertableLetzteWerte(hide = "False"):
     if hide == "False":
         cityquery = """SELECT * FROM Cities ORDER BY cityname;"""
     else:
-        cityquery = """SELECT * FROM Cities ORDER BY cityname WHERE zeigeinvisu = 'True';"""
+        cityquery = """SELECT * FROM Cities WHERE zeigeinvisu = '{}' ORDER BY cityname;""".format('True')
     cityrecords = getTableSelect(cityquery)
 
     wttrlist = []
@@ -87,15 +87,18 @@ def getWettertableLetzteWerte(hide = "False"):
             row = getTableSelect("""SELECT * FROM Wetter WHERE ctyid = {} ORDER BY timestmp DESC LIMIT 1;""".format(cityrec[0]))[0]
 
             cty = getCity(row[16])[2]
-            lokalerzeitstempel = (datetime.utcfromtimestamp(int(row[3]))+timedelta(hours=row[15]))
-            wttrlist.append( (row[1], row[2], cty, row[7], row[9], row[10], lokalerzeitstempel ) )
+            lokalerzeitstempel = (datetime.utcfromtimestamp(int(row[3]))+timedelta(hours=row[15])).strftime('%d.%m. %H:%M')
+            sonnenaufgang = (datetime.strptime(row[5], '%Y-%m-%d %H:%M:%S')+timedelta(hours=row[15])).strftime('%H:%M') + ' Uhr'
+            sonnenuntergang = (datetime.strptime(row[6], '%Y-%m-%d %H:%M:%S')+timedelta(hours=row[15])).strftime('%H:%M') + ' Uhr'
+            wttrlist.append( (row[1], row[2], cty, row[7], row[9], row[10], lokalerzeitstempel, sonnenaufgang, sonnenuntergang ) )
             #print("%s, Stadt: %s -> %s, Zeitstempel: %s, Bescheibung: %s, Temperatur: %s°C, gefühlt: %s°C" % (row[1], row[2], cty, lokalerzeitstempel, row[7], row[9], row[10]) )
-        except:
+        except Exception as e:
+            print(e)
             pass
 
     try:
         wttrtable = pd.DataFrame.from_records(wttrlist)
-        wttrtable.columns = ['Land','Messort','Stadt','Beschreibung','Temperatur', 'Gefühlt', 'Zeitstempel']
+        wttrtable.columns = ['Land','Messort','Stadt','Beschreibung','Temperatur', 'Gefühlt', 'Zeitstempel', 'Sonnenaufgang', 'Sonnenuntergang']
     except:
         wttrtable = pd.DataFrame()
     return wttrtable

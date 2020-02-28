@@ -6,6 +6,7 @@ __pycache__/
 .vscode
 
 *.db
+.auseec
 
 # C extensions
 *.so

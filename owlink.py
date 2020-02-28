@@ -59,7 +59,7 @@ def iterate_list():
 
 	hmi = visu.visualisation()
 	hmi.start_visu()
-	
+	"""
 	for index, cty in ctylst.iterrows():
 		wth = getcty(cty)
 		#if cty['Zeige in Visu'] == 'True':
@@ -73,6 +73,7 @@ def iterate_list():
 			print('Keine Verbindung zu EnEffCo Host')
 			sys.exit()
 		time.sleep(1.0)
+	"""
 	
 	i = 0
 	while True:
@@ -81,22 +82,34 @@ def iterate_list():
 
 		print('i: ' + str(i) + ', dt: ' + str(datetime.now()))
 		for index, cty in ctylst.iterrows():
-			try:
+			if not cty['ID'] in dct:
 				wth = getcty(cty)
-				bgn = wth.begin
-				if dct[cty['ID']]['begin'] != bgn: # Hier fehlt eine abfrage bei neu hinzugefuegter city
-					#if cty['Zeige in Visu'] == 'True':
-					#	hmi.add_weather_to_queu(wth)
-					weatherToDb(wth)
-					hmi.updatevisu()
-					try:
-						rsp,city,bgn = postcty(wth, cty)
-						dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-					except Exception as e:
-						print('Keine Verbindung zu EnEffCo Host')
+				weatherToDb(wth)
+				hmi.updatevisu()
+				try:
+					rsp,city,bgn = postcty(wth, cty)
+					dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+				except Exception as e:
+					print('Keine Verbindung zu EnEffCo Host')
+					sys.exit()
 				time.sleep(1.0)
-			except Exception as e:
-				print("Keine Verbindung zu ow!")
+			else:
+				try:
+					wth = getcty(cty)
+					bgn = wth.begin
+					if dct[cty['ID']]['begin'] != bgn: # Hier fehlt eine abfrage bei neu hinzugefuegter city
+						#if cty['Zeige in Visu'] == 'True':
+						#	hmi.add_weather_to_queu(wth)
+						weatherToDb(wth)
+						hmi.updatevisu()
+						try:
+							rsp,city,bgn = postcty(wth, cty)
+							dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
+						except Exception as e:
+							print('Keine Verbindung zu EnEffCo Host')
+					time.sleep(1.0)
+				except Exception as e:
+					print("Keine Verbindung zu ow!")
 
 		time.sleep(60.0)
 
