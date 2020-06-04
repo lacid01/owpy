@@ -2,6 +2,7 @@ import sqlite3
 import weather
 import pandas as pd
 from datetime import datetime, timedelta
+import sys
 
 
 def execute(con,cursor,command):
@@ -317,3 +318,40 @@ def altertable():
         if (sqliteConnection):
             sqliteConnection.close()
             print("sqlite connection is closed")
+
+def create_timestamps_in_timestamptable():
+    sqlite_select_query = """SELECT timestampUNX FROM Wetter ORDER BY timestampUNX LIMIT 1"""
+
+    records = getTableSelect(sqlite_select_query)[0][0]
+    print(datetime.utcfromtimestamp(int(records)))
+
+    erster_zeitstempel_abgerundet = 1582804800
+    letzter_zeitstempel_2020 = 1609453800
+
+    zeitstempel_aktuell = 1582804800
+    
+    try:
+        sqliteConnection = sqlite3.connect('wetter.db')
+        cursor = sqliteConnection.cursor()
+        print("Successfully Connected to SQLite")
+
+        print("Start calculating timestamps...")
+        data_tuple = []
+        while zeitstempel_aktuell <= letzter_zeitstempel_2020:
+            data_tuple.append((zeitstempel_aktuell,))
+            zeitstempel_aktuell = zeitstempel_aktuell + 1800
+            
+        print("start with inserting...")
+        sqlite_insert_query = """INSERT INTO Timestampsolver (timestampUNX) VALUES (?)"""
+        count = cursor.executemany(sqlite_insert_query, data_tuple)
+        sqliteConnection.commit()
+        print("Record inserted successfully into Stoffstrom table ", cursor.rowcount)
+        cursor.close()
+
+
+    except sqlite3.Error as error:
+        print("Error while connecting to sqlite", error)
+    finally:
+        if (sqliteConnection):
+            sqliteConnection.close()
+            print("done...")
