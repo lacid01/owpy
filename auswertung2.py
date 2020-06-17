@@ -1,5 +1,6 @@
 import pandas as pd
 from dbhelper import getTableSelect
+import datetime as dt
 from matplotlib.pyplot import *
 
 print('Read database...')
@@ -8,6 +9,7 @@ rec = getTableSelect("SELECT w.timestmp,w.timestampUNX,w.city,w.temperature FROM
 print('Create dataframe')
 data = pd.DataFrame.from_records(rec)
 data.columns = ['Zeitstempel', 'Unix Zeitstempel', 'city', 'Temperatur']
+data['ts'] = data['Zeitstempel'].apply(lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S'))
 
 print(data)
 
@@ -16,9 +18,9 @@ databln = data.loc[data['city'] == 'Berlin Schoeneberg']
 databdblzg = data.loc[data['city'] == 'Bad Belzig']
 
 figure(1)
-plot(datamich['Unix Zeitstempel']/3600.,datamich['Temperatur'],color='blue', linewidth=1.0, snap=True)
-plot(databln['Unix Zeitstempel']/3600.,databln['Temperatur'],color='green', linewidth=1.0, snap=True)
-plot(databdblzg['Unix Zeitstempel']/3600.,databdblzg['Temperatur'],color='peru', linewidth=1.0, snap=True)
+plot(datamich['ts'],datamich['Temperatur'],color='blue', linewidth=1.0, snap=True)
+plot(databln['ts'],databln['Temperatur'],color='green', linewidth=1.0, snap=True)
+plot(databdblzg['ts'],databdblzg['Temperatur'],color='peru', linewidth=1.0, snap=True)
 grid(True)
 
 '''
