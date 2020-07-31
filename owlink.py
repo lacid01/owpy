@@ -10,10 +10,8 @@ import os
 import sys
 import visu
 
-from dbhelper import insertRow
-from targetrawdatapoint import get_cities
-
-from targetrawdatapoint import *
+#from dbhelper import insertRow
+import dbhelper as dbh
 
 
 
@@ -31,54 +29,22 @@ def getcty(cty):
 	wth  = weather(_parsed_json_Erhaltete_Werte,cty)
 	return wth
 
-def postcty(wth, cty):
-	#vals = wth.getjsondatalist(cty)
-
-	#print(wth)
-
-	# nach EnEffCo
-	rt = []
-	"""
-	for val in vals:
-		header ={ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':'*/*'}
-		posturl = "http://eneffco/EnEffCoPKr/api/v0.1/rawdatapoint/" + val['datapointid'] + "/values?comment=warum"
-		rt.append(requests.post(posturl, data = val['Values'], headers=header, verify = False, auth=('EnEffCoSystemadmin', 'EnEffCoOekotec')))
-		#print('ID: ' + val['datapointid'])
-		#print("Values: " + val['Values'])
-	"""
-	return rt,wth.city,wth.begin
 
 def weatherToDb(wth):
-	insertRow(wth)
+	dbh.insertRow(wth)
 
 
 def iterate_list():
-	ctylst = get_cities()
 
 	dct = {}
 
 	hmi = visu.visualisation()
 	hmi.start_visu()
-	"""
-	for index, cty in ctylst.iterrows():
-		wth = getcty(cty)
-		#if cty['Zeige in Visu'] == 'True':
-			#hmi.add_weather_to_queu(wth)
-		weatherToDb(wth)
-		hmi.updatevisu()
-		try:
-			rsp,city,bgn = postcty(wth, cty)
-			dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-		except Exception as e:
-			print('Keine Verbindung zu EnEffCo Host')
-			sys.exit()
-		time.sleep(1.0)
-	"""
 	
 	i = 0
 	while True:
 		
-		ctylst = get_cities()
+		ctylst = dbh.getCityTable()
 
 		print('i: ' + str(i) + ', dt: ' + str(datetime.now()))
 		for index, cty in ctylst.iterrows():
@@ -86,27 +52,18 @@ def iterate_list():
 				wth = getcty(cty)
 				weatherToDb(wth)
 				hmi.updatevisu()
-				try:
-					rsp,city,bgn = postcty(wth, cty)
-					dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-				except Exception as e:
-					print('Keine Verbindung zu EnEffCo Host')
-					sys.exit()
+				dct[cty['ID']] = { "tmstmp" : wth.timestampRAW, "response" : 'False'}
 				time.sleep(1.0)
 			else:
 				try:
 					wth = getcty(cty)
-					bgn = wth.begin
-					if dct[cty['ID']]['begin'] != bgn: # Hier fehlt eine abfrage bei neu hinzugefuegter city
+					tmstmp = wth.timestampRAW
+					if dct[cty['ID']]['tmstmp'] != tmstmp: # Hier fehlt eine abfrage bei neu hinzugefuegter city
 						#if cty['Zeige in Visu'] == 'True':
 						#	hmi.add_weather_to_queu(wth)
 						weatherToDb(wth)
 						hmi.updatevisu()
-						try:
-							rsp,city,bgn = postcty(wth, cty)
-							dct[cty['ID']] = { "begin" : bgn, "response" : rsp}
-						except Exception as e:
-							print('Keine Verbindung zu EnEffCo Host')
+						dct[cty['ID']] = { "tmstmp" : tmstmp, "response" : 'False'}
 					time.sleep(1.0)
 				except Exception as e:
 					print("Keine Verbindung zu ow!")

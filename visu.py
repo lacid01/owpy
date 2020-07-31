@@ -59,7 +59,7 @@ class visualisation():
             except:
                 pass
 
-            time.sleep(0.5)
+            time.sleep(2.0)
 
 
     def start_visu(self):

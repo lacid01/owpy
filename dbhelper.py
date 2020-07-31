@@ -285,12 +285,14 @@ def showCities():
 
 def getCityTable():
     """
-    Gibt ein Array mit den Einträgen als Tupel wieder
+    Gibt ein DataFrame mit den Städten zurück
     """
     sqlite_select_query = """SELECT * FROM Cities ORDER BY ctyid"""
 
     records = getTableSelect(sqlite_select_query)
-    return records
+    ctytable = pd.DataFrame.from_records(records)
+    ctytable.columns = ['FKID','ID','Name','lat','lon','Zeige in Visu']
+    return ctytable
 
 
 def getCity(cityid):
