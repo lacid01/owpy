@@ -231,22 +231,35 @@ def updateCityShowInVisu(ctyid,name):
 
 def showCitiesRAW():
     try:
-        sqliteConnection = sqlite3.connect('wetter.db')
-        cursor = sqliteConnection.cursor()
-        
-        qlite_select_query = """SELECT * FROM Cities;"""
-        cursor.execute(qlite_select_query)
 
-        records = cursor.fetchall()
-        cursor.close()
-        for rec in records:
-            print(rec)
+        query = 'SELECT * FROM Cities'
+        sqldata = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['ctyid'])
+        print(sqldata)
         
     except sqlite3.Error as error:
         print("Failed to read data from sqlite table", error)
-    finally:
-        if (sqliteConnection):
-            sqliteConnection.close()
+
+def updateCity(alias,name,lat,lon,zeigeinvisu):
+    query = 'SELECT * FROM Cities'
+    dbid = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['cityID']).loc[alias]['ctyid']
+
+    try:
+        sqliteConnection = sqlite3.connect('wetter.db')
+        cursor = sqliteConnection.cursor()
+        print("Successfully Connected to SQLite")
+
+        print("UPDATE Cities SET cityname = '{}',lat = '{}',lon='{}',zeigeinvisu = '{}' WHERE ctyid = '{}';".format(name,lat,lon,zeigeinvisu,dbid))
+
+        count = cursor.execute("UPDATE Cities SET cityname = '{}',lat = '{}',lon='{}',zeigeinvisu = '{}' WHERE ctyid = '{}';".format(name,lat,lon,zeigeinvisu,dbid))
+        sqliteConnection.commit()
+        
+        print("Record inserted successfully into Cities table ", cursor.rowcount)
+
+        cursor.close()
+
+
+    except sqlite3.Error as error:
+        print("Error while connecting to sqlite", error)
 
 
 def showCities():

@@ -4,11 +4,8 @@ from dbhelper import getTableSelect
 import datetime as dt
 import matplotlib.pyplot as plt
 
-
-cities = ['Michendorf','Berlin Schoeneberg','Bad Belzig']
-days = 5
-
-
+cities = ['Sønderborg Kommune','Nordborg','Nyborg']
+days = 14
 
 query = "SELECT * FROM Wetter ORDER BY timestampUNX"
 #data = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['wetterid','country'])
@@ -18,9 +15,10 @@ print('Reduziere Datensatz...')
 utc_today = int((dt.datetime.today() - dt.datetime(1970,1,1)).total_seconds())
 data = data[ data['timestampUNX'] > (utc_today - 60*60*24*days) ]
 print('Starte Zeitstempelumrechnung...')
-data['timestmp'] = data.apply(lambda x: dt.datetime.strptime(x['timestmp'], '%Y-%m-%d %H:%M:%S') + dt.timedelta(seconds=(60*60*x['timezone'])),axis=1) 
+data['timestmp'] = data['timestmp'].apply(lambda x: dt.datetime.strptime(x, '%Y-%m-%d %H:%M:%S'))
 
 print(data)
+
 
 dfs = []
 for city in cities:

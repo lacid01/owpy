@@ -81,4 +81,4 @@ class visualisation():
         print('Thread beendet')
 
     def updatevisu(self):
-        self.visudata = getWettertableLetzteWerte().sort_values(by=['Land','Stadt'])
+        self.visudata = getWettertableLetzteWerte(hide="True").sort_values(by=['Land','Stadt'])

@@ -1,23 +1,21 @@
+from matplotlib.pyplot import colormaps
 import pandas as pd
-import sqlite3
-from dbhelper import getTableSelect
-import datetime as dt
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import sqlite3
+import datetime as dt
 
-
-cities = ['Michendorf','Berlin Schoeneberg','Bad Belzig']
-days = 5
-
-
+cities = ['Naples','Gypsum','Grapevine','Owasso']
+days = 3
 
 query = "SELECT * FROM Wetter ORDER BY timestampUNX"
+
 #data = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['wetterid','country'])
-print('Starte db-Abfrage...')
+# lese sql
 data = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['wetterid','country'])
-print('Reduziere Datensatz...')
+# reduziere auf Abfragetage
 utc_today = int((dt.datetime.today() - dt.datetime(1970,1,1)).total_seconds())
 data = data[ data['timestampUNX'] > (utc_today - 60*60*24*days) ]
-print('Starte Zeitstempelumrechnung...')
 data['timestmp'] = data.apply(lambda x: dt.datetime.strptime(x['timestmp'], '%Y-%m-%d %H:%M:%S') + dt.timedelta(seconds=(60*60*x['timezone'])),axis=1) 
 
 print(data)
@@ -66,6 +64,5 @@ plt.grid(True)
 plt.legend(cities)
 #plt.ylim([0,40])
 plt.ylabel('Windgeschwindigkeit')
-
 #print(plt.colormaps())
 plt.show()
