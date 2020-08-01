@@ -4,10 +4,9 @@ from dbhelper import getTableSelect
 import datetime as dt
 import matplotlib.pyplot as plt
 
-cities = ['Sønderborg Kommune','Nordborg','Nyborg']
-days = 14
+cities = ['Goroka','Boram','Aitape']
+days = 3
 
-#query = "SELECT * FROM Wetter ORDER BY timestampUNX"
 query = 'SELECT w.wetterid, w.country, w.city, c.cityname as ziel, w.timestampunx, w.timestmp, w.temperature,w.temperaturegefuehlt,w.humidity, w.pressure, w.windspeed, w.timezone FROM Wetter as w INNER JOIN Cities as c ON c.ctyid = w.ctyid ORDER BY w.timestampUNX'
 #data = pd.read_sql_query(query,sqlite3.connect('wetter.db')).set_index(['wetterid','country'])
 print('Starte db-Abfrage...')
