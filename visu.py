@@ -4,6 +4,7 @@ from weather import *
 import threading
 import time
 from dbhelper import getWettertableLetzteWerte
+import dbhelper as dbh
 
 
 
@@ -14,6 +15,7 @@ class visualisation():
 
         self.queu = []
         self.weatherlist = {}
+        self.dbversion = dbh.databaseversion()
         self.lock = threading.Lock()
 
         self.end = False
@@ -30,7 +32,7 @@ class visualisation():
 
     def clear_terminal(self):
         if sys.platform == "linux" or sys.platform == "linux2":
-           os.system('clear')
+            os.system('clear')
         elif sys.platform == "darwin":
             print('OS: OS X')
         elif sys.platform == "win32":
@@ -46,20 +48,22 @@ class visualisation():
             self.lock.release()
 
             self.clear_terminal()
-            print('Time: ' + str(datetime.now()))
+            print('Time: {}, Database: v{}'.format(str(datetime.now()),self.dbversion))
+            print('Update interval: {}s / {}s\n'.format(dbh.settings('TimeToNextLocationRequest')/1000.0, dbh.settings('TimeToNextLocationIteration')/1000.0))
 
             """
             for cty in self.weatherlist.keys():
                 print()
                 print(self.weatherlist[cty])
             """
-            print("\n")
             try:
                 print(self.visudata.to_string(index=False))
-            except:
-                pass
+            except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                dbh.Log('visu.py - Error: {} at line {}'.format(e, exc_tb.tb_lineno),'Error')
+                print('visu.py - Error: {} at line {}'.format(e, exc_tb.tb_lineno))
 
-            time.sleep(2.0)
+            time.sleep(10.0)
 
 
     def start_visu(self):
@@ -81,4 +85,5 @@ class visualisation():
         print('Thread beendet')
 
     def updatevisu(self):
-        self.visudata = getWettertableLetzteWerte(hide="True").sort_values(by=['Land','Zielort'])
+        df = getWettertableLetzteWerte(hide="True").sort_values(by=['Land','Zielort'])
+        self.visudata = df.drop(['Land','Messort'],axis=1)

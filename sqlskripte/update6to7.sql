@@ -1,0 +1,40 @@
+PRAGMA foreign_keys=OFF;
+ALTER TABLE Cities RENAME TO Cities_old;
+
+CREATE TABLE Cities (
+    ctyid INTEGER PRIMARY KEY,
+    cityname TEXT NOT NULL,
+    lat REAL NOT NULL,
+    lon REAL NOT NULL,
+    zeigeinvisu TEXT NOT NULL,
+    firstadded INTEGER
+);
+
+INSERT INTO Cities (
+    ctyid, 
+    cityname, 
+    lat, 
+    lon,
+    zeigeinvisu
+) 
+SELECT 
+    ctyid, 
+    cityname, 
+    lat, 
+    lon,
+    zeigeinvisu
+  FROM Cities_old
+;
+
+DROP TABLE IF EXISTS Cities_old;
+PRAGMA foreign_keys=ON;
+
+DROP TABLE IF EXISTS FirstVals;
+
+CREATE TABLE FirstVals (
+    ctyid INTEGER,
+    firstadded INTEGER
+);
+
+
+DROP TABLE IF EXISTS FirstVals;

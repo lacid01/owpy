@@ -1,0 +1,18 @@
+
+CREATE TABLE AstronomicalData (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ctyid INTEGER,
+    today INTEGER,
+    sunrise INTEGER,
+    sunset INTEGER,
+    solar_moon INTEGER,
+    day_length INTEGER,
+    civil_twilight_begin INTEGER,
+    civil_twilight_end INTEGER,
+    nautical_twilight_begin INTEGER,
+    nautical_twilight_end INTEGER,
+    astronomical_twilight_begin INTEGER,
+    astronomical_twilight_end INTEGER,
+    timezone INTEGER,
+    FOREIGN KEY (ctyid) REFERENCES Cities (ctyid) ON DELETE CASCADE
+);

@@ -17,10 +17,6 @@ try:
 
     except sqlite3.Error as error:
         print("Error while executing sqlite script", error)
-    finally:
-        if (sqliteConnection):
-            sqliteConnection.close()
-            print("sqlite connection is closed")
 
 except Exception as e:
     print("Datei nicht gefunden.")
